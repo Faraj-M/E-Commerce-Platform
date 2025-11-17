@@ -13,7 +13,7 @@ This repo holds the planning skeleton for our Django-based e‑commerce platform
 3. Node/Tailwind: install Node 20+, then `npm install` once we add the frontend package manifest.  
 4. Copy `.env.example` (once we add it) to `.env` with Django secret, DB creds, Stripe keys, etc.
 
-### File Structure (working layout)
+### File Structure
 - `backend/`
   - `ecommerce_platform/`: project config (settings, urls, ASGI/WSGI).  
   - `apps/`: feature modules (`accounts`, `catalog`, `orders`, `payments`, `core`) with stubs for models, views, serializers, services, tests.  
