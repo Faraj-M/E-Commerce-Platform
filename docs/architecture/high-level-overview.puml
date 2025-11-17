@@ -1,0 +1,58 @@
+@startuml
+title High-Level Architecture Overview (Monolithic Django MVC)
+
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+
+package "Clients" {
+  [Web Browser]
+  [Admin/Staff]
+}
+
+package "Django Monolith" {
+  [Frontend Templates/HTMX]
+  [Accounts App]
+  [Catalog App]
+  [Orders App]
+  [Payments App]
+  [Core Services]
+  [REST API Layer]
+}
+
+package "Data & Infra" {
+  database "PostgreSQL" as PG
+  node "Redis" as Redis
+  [Celery Worker]
+}
+
+package "External Services" {
+  [Stripe API]
+  [Email/SMS Provider]
+}
+
+[Web Browser] --> [Frontend Templates/HTMX] : Server-rendered pages\n+ HTMX partials
+[Admin/Staff] --> [Frontend Templates/HTMX]
+[Frontend Templates/HTMX] --> [REST API Layer] : progressive enhancements
+
+[REST API Layer] --> [Accounts App]
+[REST API Layer] --> [Catalog App]
+[REST API Layer] --> [Orders App]
+[REST API Layer] --> [Payments App]
+[REST API Layer] --> [Core Services]
+
+[Accounts App] --> PG
+[Catalog App] --> PG
+[Orders App] --> PG
+[Payments App] --> PG
+[Core Services] --> Redis
+
+[Payments App] --> [Stripe API] : Checkout + Webhooks
+[Orders App] --> [Celery Worker] : async fulfillment tasks
+[Celery Worker] --> Redis : task queue
+[Celery Worker] --> PG : transactional updates
+
+[Core Services] --> [Email/SMS Provider] : transactional messaging
+
+@enduml
+
+

@@ -1,0 +1,18 @@
+# Core web framework & API
+Django>=5.1,<6.0
+djangorestframework>=3.15.0
+django-htmx>=1.17.0
+django-allauth>=0.61.1
+
+# Data & background processing
+psycopg[binary]>=3.2.1
+redis>=5.0.8
+celery>=5.4.0
+
+# Payments & utilities
+stripe>=11.2.0
+python-dotenv>=1.0.1
+whitenoise>=6.7.0
+gunicorn>=23.0.0
+
+
