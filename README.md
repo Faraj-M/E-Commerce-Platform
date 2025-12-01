@@ -40,6 +40,8 @@ Sample products are automatically loaded when the container starts. You can also
 docker-compose exec web python manage.py loaddata sample_data
 ```
 
+<!--
+
 ### Managing Database Changes
 - If you modify models, regenerate migrations inside Docker:
   ```bash
@@ -52,35 +54,21 @@ docker-compose exec web python manage.py loaddata sample_data
 - Make sure Docker Desktop is running before `docker-compose up`.
 - Check logs if something fails: `docker-compose logs -f web`.
 - If you change environment values, restart the stack: `docker-compose down && docker-compose up --build`.
+-->
+
+
 
 ## Project Notes
 
-This repo holds the planning skeleton for our Django-based e‑commerce platform. Nothing is wired up yet—these notes are just to keep both of us aligned while we start implementing.
+- **API design & external integration** – Django REST Framework viewsets in `apps.catalog`, `apps.orders`, `apps.accounts`, and `apps.payments` expose CRUD endpoints documented in `docs/API.md`; the payments module creates Stripe PaymentIntents and listens for webhooks in `apps/payments/views.py`.
+- **Architecture & separation** – Monolithic Django MTV split into modular apps plus shared `core` utilities, server-rendered templates in `frontend/templates`, and DRF routers mounted under `/api`; PlantUML diagrams in `docs/architecture/*.puml` describe the running stack (PostgreSQL, Redis, Stripe).
+- **Authentication & security** – Custom `accounts.User` model with Django session auth + allauth backend, login/signup/profile flows in `apps/accounts/views.py`, `login_required` around checkout and payments, staff-only filtering inside API viewsets, CSRF defaults, and Stripe webhook signature checks.
+- **Database & ORM** – PostgreSQL schema managed through Django migrations (`apps/*/migrations/0001_initial.py`) with relationships tying `User`, `Product`, `Order`, `OrderItem`, and `Payment`; catalog fixtures (`apps/catalog/fixtures/sample_data.json`) seed demo data during Docker boot.
+- **Deployment & DevOps** – Dockerfile builds the Gunicorn web image, while `docker-compose.yml` orchestrates web, Postgres, and Redis, runs migrations + sample data, injects secrets from `.env`, and wires Stripe keys; `generate-secret-key.sh` assists local runs.
+- **Version control & collaboration** – Shared Git repo with Docker-first onboarding documented here, architecture notes in `docs/`, and modular app folders that keep pair-programming responsibilities easy to split.
+- **Code quality & documentation** – Central helpers live in `backend/common`, serializers/models carry docstrings, API reference is tracked in `docs/API.md`, and PlantUML diagrams plus architecture notes make the design review-ready; HTMX/Tailwind placeholders under `frontend/static` mark where presentation polish lands.
 
-- **Architecture**: Monolithic Django MVC/MTV with modular apps (`accounts`, `catalog`, `orders`, `payments`, `core`). Server-rendered pages with Django templates + HTMX interactivity and Tailwind styling. REST hooks later via Django REST Framework.
-- **Data + Infra**: PostgreSQL primary DB, Redis for caching/background jobs (Celery or RQ). Stripe handles payments + webhooks. Docker compose will orchestrate web, worker, db, redis (to be added under `infrastructure/`).
-- **Dev stack**: Python 3.12+, Poetry for dependency/virtualenv management, Node 20+ for Tailwind build, GitHub repo already linked. Keep commits frequent and descriptive.
-
-### Codespace Notes
-1. Install PlantUML extention for VS Code to view the UML diagram (i'll make a nicer one after the project is done its just easier to edit it this way for both of us) 
-2. Install Poetry: https://python-poetry.org/docs/. 
-    - after we add dependencies; inside this folder run `poetry install` and `poetry shell` for a virtual env.  
-3. Node/Tailwind: install Node 20+, then `npm install` once we add the frontend package manifest.  
-4. Copy `.env.example` (once we add it) to `.env` with Django secret, DB creds, Stripe keys, etc.
-
-### File Structure
-- `backend/`
-  - `ecommerce_platform/`: project config (settings, urls, ASGI/WSGI).  
-  - `apps/`: feature modules (`accounts`, `catalog`, `orders`, `payments`, `core`) with stubs for models, views, serializers, services, tests.  
-  - `common/`: shared utilities/exceptions.  
-  - `tests/`: top-level pytest fixtures and smoke tests.
-- `frontend/`
-  - `templates/`: Django base templates; HTMX partials will live here.  
-  - `static/css/main.css`: Tailwind build output placeholder.  
-  - `static/js/app.js`: HTMX/Tailwind helper scripts placeholder.  
-  - `static/img/placeholder.txt`: marker for design assets.
-- `docs/architecture/`
-  - `diagram-notes.md`: running log of UML tasks.  
-  - `high-level-overview.puml`: PlantUML component diagram for the monolith.
-- `infrastructure/notes.txt`: reminder that Docker/CI assets will land here.
-- `requirements.txt`: mirrors Poetry dependencies for reference/CI.
+### Still to implement
+- **Testing & QA** – `backend/tests/` only has a placeholder; unit, API, and Selenium coverage still need to be written.
+- **Performance optimization** – No PageSpeed runs, caching strategy, or Tailwind build yet (`frontend/static/css/main.css` is still a stub).
+- **CI/CD & ops polish** – No automated pipeline, HTTPS termination, Celery worker container, or Stripe webhook tunnel automation; deployment docs still assume manual `docker-compose up`.
