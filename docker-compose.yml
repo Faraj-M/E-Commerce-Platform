@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ecommerce_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  web:
+    build: .
+    command: sh -c "if [ -z \"$$DJANGO_SECRET_KEY\" ]; then export DJANGO_SECRET_KEY=$$(python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'); fi && python manage.py migrate && (python manage.py loaddata sample_data || true) && gunicorn --bind 0.0.0.0:8000 --workers 3 ecommerce_platform.wsgi:application"
+    volumes:
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=db
+      - DB_NAME=ecommerce_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - REDIS_URL=redis://redis:6379/0
+      - DJANGO_SETTINGS_MODULE=ecommerce_platform.settings.local
+      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY:-pk_test_your_key_here}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-sk_test_your_key_here}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+

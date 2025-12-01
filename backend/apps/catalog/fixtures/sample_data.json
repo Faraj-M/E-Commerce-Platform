@@ -1,0 +1,153 @@
+[
+  {
+    "model": "catalog.category",
+    "pk": 1,
+    "fields": {
+      "name": "Electronics",
+      "slug": "electronics",
+      "description": "Electronic devices and gadgets",
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 2,
+    "fields": {
+      "name": "Clothing",
+      "slug": "clothing",
+      "description": "Apparel and fashion items",
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 3,
+    "fields": {
+      "name": "Books",
+      "slug": "books",
+      "description": "Books and reading materials",
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 1,
+    "fields": {
+      "name": "Wireless Headphones",
+      "slug": "wireless-headphones",
+      "description": "High-quality wireless headphones with noise cancellation and 30-hour battery life. Perfect for music lovers and professionals.",
+      "price": "99.99",
+      "category": 1,
+      "stock_quantity": 50,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 2,
+    "fields": {
+      "name": "Smartphone",
+      "slug": "smartphone",
+      "description": "Latest generation smartphone with advanced camera system, 5G connectivity, and all-day battery life.",
+      "price": "699.99",
+      "category": 1,
+      "stock_quantity": 25,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 3,
+    "fields": {
+      "name": "Laptop",
+      "slug": "laptop",
+      "description": "Powerful laptop with fast processor, high-resolution display, and long battery life. Ideal for work and entertainment.",
+      "price": "1299.99",
+      "category": 1,
+      "stock_quantity": 15,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 4,
+    "fields": {
+      "name": "Cotton T-Shirt",
+      "slug": "cotton-tshirt",
+      "description": "Comfortable 100% cotton t-shirt available in multiple colors. Perfect for everyday wear.",
+      "price": "19.99",
+      "category": 2,
+      "stock_quantity": 100,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 5,
+    "fields": {
+      "name": "Denim Jeans",
+      "slug": "denim-jeans",
+      "description": "Classic fit denim jeans made from premium denim. Durable and stylish for any occasion.",
+      "price": "49.99",
+      "category": 2,
+      "stock_quantity": 75,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 6,
+    "fields": {
+      "name": "Web Development Guide",
+      "slug": "web-development-guide",
+      "description": "Comprehensive guide to modern web development covering HTML, CSS, JavaScript, and frameworks.",
+      "price": "29.99",
+      "category": 3,
+      "stock_quantity": 200,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 7,
+    "fields": {
+      "name": "Python Programming Book",
+      "slug": "python-programming-book",
+      "description": "Learn Python programming from basics to advanced topics. Includes practical examples and exercises.",
+      "price": "34.99",
+      "category": 3,
+      "stock_quantity": 150,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 8,
+    "fields": {
+      "name": "Tablet",
+      "slug": "tablet",
+      "description": "10-inch tablet with high-resolution display, fast performance, and all-day battery. Great for reading, browsing, and entertainment.",
+      "price": "399.99",
+      "category": 1,
+      "stock_quantity": 30,
+      "is_active": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z"
+    }
+  }
+]
+

@@ -1,0 +1,70 @@
+@startuml
+title Class Diagram - Core Models
+
+skinparam classAttributeIconSize 0
+
+class User {
+  +username: String
+  +email: String
+  +phone: String
+  +address: Text
+  +city: String
+  +postal_code: String
+  +country: String
+  +created_at: DateTime
+  +updated_at: DateTime
+}
+
+class Category {
+  +name: String
+  +slug: String
+  +description: Text
+  +created_at: DateTime
+}
+
+class Product {
+  +name: String
+  +slug: String
+  +description: Text
+  +price: Decimal
+  +stock_quantity: Integer
+  +image: ImageField
+  +is_active: Boolean
+  +created_at: DateTime
+  +updated_at: DateTime
+  +is_in_stock(): Boolean
+}
+
+class Order {
+  +status: String
+  +total_amount: Decimal
+  +shipping_address: Text
+  +shipping_city: String
+  +shipping_postal_code: String
+  +shipping_country: String
+  +created_at: DateTime
+  +updated_at: DateTime
+}
+
+class OrderItem {
+  +quantity: Integer
+  +price: Decimal
+  +get_subtotal(): Decimal
+}
+
+class Payment {
+  +stripe_payment_intent_id: String
+  +amount: Decimal
+  +status: String
+  +created_at: DateTime
+  +updated_at: DateTime
+}
+
+User "1" --> "*" Order : places
+Category "1" --> "*" Product : contains
+Product "*" --> "*" OrderItem : included_in
+Order "1" --> "*" OrderItem : contains
+Order "1" --> "1" Payment : has
+
+@enduml
+

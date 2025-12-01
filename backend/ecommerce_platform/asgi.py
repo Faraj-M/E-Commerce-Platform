@@ -1,3 +1,9 @@
-"""ASGI entry point for future async capabilities and deployment targets."""
+import os
+
+from django.core.asgi import get_asgi_application
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecommerce_platform.settings.local')
+
+application = get_asgi_application()
 
 
