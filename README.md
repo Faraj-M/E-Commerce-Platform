@@ -1,5 +1,7 @@
 # E-Commerce Platform
 
+**MarketPlace** is a full-stack web application that allows users to browse products, manage shopping carts, and securely process payments using Stripe. Built with Django, PostgreSQL, and modern frontend technologies, it demonstrates end-to-end e-commerce functionality including user authentication, product catalogue management, order processing, and payment integration.
+
 Demo Video: https://drive.google.com/file/d/1o7S_5AMXYrXbf27jc7EooYbtonpsLWxz/view?usp=sharing
 
 ## Quick Start with Docker
