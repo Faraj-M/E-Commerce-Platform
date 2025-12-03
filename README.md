@@ -36,6 +36,22 @@ Demo Video: https://drive.google.com/file/d/1o7S_5AMXYrXbf27jc7EooYbtonpsLWxz/vi
    - Main site: http://localhost:8000
    - Admin panel: http://localhost:8000/admin
 
+### Running Tests
+
+**Unit and Integration Tests**:
+```bash
+docker-compose -f infrastructure/docker-compose.yml exec web pytest apps/ -v
+```
+
+**End-to-End Tests** (requires application running):
+```bash
+# Start the application first
+docker-compose -f infrastructure/docker-compose.yml up -d
+
+# Run E2E tests
+docker-compose -f infrastructure/docker-compose.yml exec web pytest tests/test_e2e.py -v
+```
+
 ### Sample Data
 
 Sample products are automatically loaded when the container starts. You can also load them manually:
