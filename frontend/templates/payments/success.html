@@ -4,19 +4,19 @@
 
 {% block content %}
 <div class="px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8 text-center">
+    <div class="max-w-md mx-auto bg-slate-800 rounded-xl shadow-xl p-8 text-center border border-slate-700">
         <div class="mb-4">
             <svg class="mx-auto h-16 w-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
         </div>
-        <h1 class="text-2xl font-bold text-gray-900 mb-4">Payment Successful!</h1>
-        <p class="text-gray-600 mb-6">Your payment has been processed successfully.</p>
+        <h1 class="text-2xl font-bold text-white mb-4">Payment Successful!</h1>
+        <p class="text-slate-300 mb-6">Your payment has been processed successfully.</p>
         <div class="space-y-2">
-            <a href="{% url 'order_detail' payment.order.id %}" class="block bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 font-medium">
+            <a href="{% url 'order_detail' payment.order.id %}" class="block bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-blue-800 font-medium transition">
                 View Order
             </a>
-            <a href="{% url 'product_list' %}" class="block text-indigo-600 hover:text-indigo-800">
+            <a href="{% url 'product_list' %}" class="block text-blue-400 hover:text-blue-300 font-medium">
                 Continue Shopping
             </a>
         </div>

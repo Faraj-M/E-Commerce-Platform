@@ -4,58 +4,58 @@
 
 {% block content %}
 <div class="px-4 sm:px-6 lg:px-8">
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">Shopping Cart</h1>
+    <h1 class="text-3xl font-bold text-white mb-6">Shopping Cart</h1>
     
     {% if cart_items %}
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="bg-slate-800 rounded-xl shadow-xl overflow-hidden border border-slate-700">
         <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+            <thead class="bg-slate-700">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Product</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Price</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Quantity</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Total</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Actions</th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="bg-slate-800 divide-y divide-slate-700">
                 {% for item in cart_items %}
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center">
                             <div>
-                                <div class="text-sm font-medium text-gray-900">{{ item.product.name }}</div>
+                                <div class="text-sm font-medium text-white">{{ item.product.name }}</div>
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ item.product.price }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-300">${{ item.product.price }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <form method="post" action="{% url 'update_cart' item.product.id %}" class="flex items-center gap-2">
                             {% csrf_token %}
                             <input type="number" name="quantity" value="{{ item.quantity }}" min="0" max="{{ item.product.stock_quantity }}"
-                                   class="w-20 px-2 py-1 border rounded">
-                            <button type="submit" class="text-indigo-600 hover:text-indigo-800 text-sm">Update</button>
+                                   class="w-20 px-2 py-1 border border-slate-600 bg-slate-700 text-white rounded">
+                            <button type="submit" class="text-blue-400 hover:text-blue-300 text-sm">Update</button>
                         </form>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${{ item.total }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">${{ item.total }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <a href="{% url 'remove_from_cart' item.product.id %}" 
-                           class="text-red-600 hover:text-red-800 text-sm">Remove</a>
+                           class="text-red-400 hover:text-red-300 text-sm">Remove</a>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
         
-        <div class="bg-gray-50 px-6 py-4">
+        <div class="bg-slate-700 px-6 py-4">
             <div class="flex justify-between items-center">
-                <span class="text-lg font-semibold">Total: ${{ total }}</span>
+                <span class="text-lg font-semibold text-white">Total: ${{ total }}</span>
                 {% if user.is_authenticated %}
-                <a href="{% url 'checkout' %}" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 font-medium">
+                <a href="{% url 'checkout' %}" class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-blue-800 font-medium transition">
                     Proceed to Checkout
                 </a>
                 {% else %}
-                <a href="{% url 'login' %}?next={% url 'checkout' %}" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 font-medium">
+                <a href="{% url 'login' %}?next={% url 'checkout' %}" class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-blue-800 font-medium transition">
                     Login to Checkout
                 </a>
                 {% endif %}
@@ -63,9 +63,10 @@
         </div>
     </div>
     {% else %}
-    <div class="bg-white rounded-lg shadow-lg p-12 text-center">
-        <p class="text-gray-500 text-lg mb-4">Your cart is empty.</p>
-        <a href="{% url 'product_list' %}" class="text-indigo-600 hover:text-indigo-800">Continue Shopping</a>
+    <div class="bg-slate-800 rounded-xl shadow-xl p-12 text-center border border-slate-700">
+        <i class="fas fa-shopping-cart text-6xl text-slate-600 mb-4"></i>
+        <p class="text-slate-300 text-lg mb-4">Your cart is empty.</p>
+        <a href="{% url 'product_list' %}" class="inline-block bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-blue-800 font-medium transition">Continue Shopping</a>
     </div>
     {% endif %}
 </div>

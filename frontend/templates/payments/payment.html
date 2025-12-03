@@ -4,22 +4,22 @@
 
 {% block content %}
 <div class="px-4 sm:px-6 lg:px-8">
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">Payment</h1>
+    <h1 class="text-3xl font-bold text-white mb-6">Payment</h1>
     
-    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
+    <div class="max-w-2xl mx-auto bg-slate-800 rounded-xl shadow-xl p-8 border border-slate-700">
         <div class="mb-6">
-            <h2 class="text-xl font-semibold mb-2">Order Summary</h2>
-            <p class="text-gray-600">Order #{{ order.id }}</p>
-            <p class="text-2xl font-bold text-indigo-600 mt-2">${{ order.total_amount }}</p>
+            <h2 class="text-xl font-semibold mb-2 text-white">Order Summary</h2>
+            <p class="text-slate-300">Order #{{ order.id }}</p>
+            <p class="text-2xl font-bold text-blue-400 mt-2">${{ order.total_amount }}</p>
         </div>
         
         <form id="payment-form">
-            <div id="card-element" class="mb-4 p-4 border rounded-lg">
+            <div id="card-element" class="mb-4 p-4 border border-slate-600 bg-slate-700 rounded-lg">
             </div>
-            <div id="card-errors" role="alert" class="text-red-600 mb-4"></div>
+            <div id="card-errors" role="alert" class="text-red-400 mb-4"></div>
             
             <button type="submit" id="submit-button" 
-                    class="w-full bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 font-medium">
+                    class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 font-medium transition">
                 Pay ${{ order.total_amount }}
             </button>
         </form>
@@ -55,8 +55,13 @@
             cardErrors.textContent = error.message;
             submitButton.disabled = false;
             submitButton.textContent = 'Pay ${{ order.total_amount }}';
-        } else {
+        } else if (paymentIntent && paymentIntent.status === 'succeeded') {
             window.location.href = '{% url "payment_success" payment.id %}';
+        } else {
+            cardErrors.textContent = 'Payment is being processed. Please wait...';
+            setTimeout(() => {
+                window.location.href = '{% url "payment_success" payment.id %}';
+            }, 2000);
         }
     });
 </script>

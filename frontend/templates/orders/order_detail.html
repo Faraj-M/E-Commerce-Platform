@@ -4,45 +4,47 @@
 
 {% block content %}
 <div class="px-4 sm:px-6 lg:px-8">
-    <a href="{% url 'order_list' %}" class="text-indigo-600 hover:text-indigo-800 mb-4 inline-block">← Back to Orders</a>
+    <a href="{% url 'order_list' %}" class="text-blue-400 hover:text-blue-300 mb-4 inline-block font-medium transition">
+        <i class="fas fa-arrow-left mr-2"></i>Back to Orders
+    </a>
     
-    <div class="bg-white rounded-lg shadow-lg p-8">
-        <h1 class="text-2xl font-bold text-gray-900 mb-6">Order #{{ order.id }}</h1>
+    <div class="bg-slate-800 rounded-xl shadow-xl p-8 border border-slate-700">
+        <h1 class="text-2xl font-bold text-white mb-6">Order #{{ order.id }}</h1>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-                <h2 class="text-lg font-semibold mb-2">Order Information</h2>
-                <p class="text-sm text-gray-600">Date: {{ order.created_at|date:"F d, Y H:i" }}</p>
-                <p class="text-sm text-gray-600">Status: 
+                <h2 class="text-lg font-semibold mb-2 text-white">Order Information</h2>
+                <p class="text-sm text-slate-300">Date: {{ order.created_at|date:"F d, Y H:i" }}</p>
+                <p class="text-sm text-slate-300">Status: 
                     <span class="font-medium">{{ order.get_status_display }}</span>
                 </p>
-                <p class="text-sm text-gray-600">Total: <span class="font-bold text-lg">${{ order.total_amount }}</span></p>
+                <p class="text-sm text-slate-300">Total: <span class="font-bold text-lg text-blue-400">${{ order.total_amount }}</span></p>
             </div>
             <div>
-                <h2 class="text-lg font-semibold mb-2">Shipping Address</h2>
-                <p class="text-sm text-gray-600">{{ order.shipping_address }}</p>
-                <p class="text-sm text-gray-600">{{ order.shipping_city }}, {{ order.shipping_postal_code }}</p>
-                <p class="text-sm text-gray-600">{{ order.shipping_country }}</p>
+                <h2 class="text-lg font-semibold mb-2 text-white">Shipping Address</h2>
+                <p class="text-sm text-slate-300">{{ order.shipping_address }}</p>
+                <p class="text-sm text-slate-300">{{ order.shipping_city }}, {{ order.shipping_postal_code }}</p>
+                <p class="text-sm text-slate-300">{{ order.shipping_country }}</p>
             </div>
         </div>
         
-        <h2 class="text-lg font-semibold mb-4">Order Items</h2>
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+        <h2 class="text-lg font-semibold mb-4 text-white">Order Items</h2>
+        <table class="min-w-full divide-y divide-slate-700">
+            <thead class="bg-slate-700">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Subtotal</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Product</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Quantity</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Price</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase">Subtotal</th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="bg-slate-800 divide-y divide-slate-700">
                 {% for item in order.items.all %}
                 <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ item.product.name }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.quantity }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ item.price }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${{ item.get_subtotal }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{{ item.product.name }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-300">{{ item.quantity }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-300">${{ item.price }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">${{ item.get_subtotal }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -50,7 +52,7 @@
         
         {% if not order.payment %}
         <div class="mt-6">
-            <a href="{% url 'payment_create' order.id %}" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 font-medium">
+            <a href="{% url 'payment_create' order.id %}" class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-blue-800 font-medium transition">
                 Pay Now
             </a>
         </div>

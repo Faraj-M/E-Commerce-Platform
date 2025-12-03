@@ -22,17 +22,21 @@ def add_to_cart(request, product_id):
         cart = get_cart(request)
         quantity = int(request.POST.get('quantity', 1))
         
-        if product_id in cart:
-            cart[product_id] += quantity
+        if str(product_id) in cart:
+            cart[str(product_id)] += quantity
         else:
-            cart[product_id] = quantity
+            cart[str(product_id)] = quantity
         
-        if cart[product_id] > product.stock_quantity:
-            cart[product_id] = product.stock_quantity
+        if cart[str(product_id)] > product.stock_quantity:
+            cart[str(product_id)] = product.stock_quantity
             messages.warning(request, f'Only {product.stock_quantity} items available in stock.')
         
         request.session['cart'] = cart
         messages.success(request, f'{product.name} added to cart.')
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': True, 'message': f'{product.name} added to cart.'})
+        
         return redirect('product_detail', slug=product.slug)
     
     return redirect('product_list')

@@ -23,6 +23,10 @@ def create_payment(request, order_id):
         messages.info(request, 'Payment already exists for this order.')
         return redirect('order_detail', order_id=order.id)
     
+    if not settings.STRIPE_SECRET_KEY or settings.STRIPE_SECRET_KEY.startswith('sk_test_51QEXAMPLE'):
+        messages.error(request, 'Stripe API keys are not configured. Please add your Stripe keys to the .env file and restart Docker with: docker-compose -f infrastructure/docker-compose.yml restart web')
+        return redirect('order_detail', order_id=order.id)
+    
     try:
         intent = stripe.PaymentIntent.create(
             amount=int(order.total_amount * 100),
@@ -53,6 +57,25 @@ def create_payment(request, order_id):
 @login_required
 def payment_success(request, payment_id):
     payment = get_object_or_404(Payment, id=payment_id, order__user=request.user)
+    
+    # Update payment and order status when payment succeeds
+    if payment.status == 'pending':
+        try:
+            # Verify payment with Stripe
+            intent = stripe.PaymentIntent.retrieve(payment.stripe_payment_intent_id)
+            if intent.status == 'succeeded':
+                payment.status = 'succeeded'
+                payment.save()
+                payment.order.status = 'processing'
+                payment.order.save()
+                messages.success(request, 'Payment successful! Your order is being processed.')
+            elif intent.status == 'requires_payment_method':
+                payment.status = 'failed'
+                payment.save()
+                messages.error(request, 'Payment failed. Please try again.')
+        except Exception as e:
+            messages.warning(request, f'Payment verification issue: {str(e)}')
+    
     context = {'payment': payment}
     return render(request, 'payments/success.html', context)
 

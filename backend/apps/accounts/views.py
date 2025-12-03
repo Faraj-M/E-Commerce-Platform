@@ -16,6 +16,10 @@ def signup(request):
         password = request.POST.get('password')
         password_confirm = request.POST.get('password_confirm')
         
+        if not username or not email or not password:
+            messages.error(request, 'All fields are required.')
+            return render(request, 'accounts/signup.html')
+        
         if password != password_confirm:
             messages.error(request, 'Passwords do not match.')
             return render(request, 'accounts/signup.html')
@@ -24,10 +28,18 @@ def signup(request):
             messages.error(request, 'Username already exists.')
             return render(request, 'accounts/signup.html')
         
-        user = User.objects.create_user(username=username, email=email, password=password)
-        login(request, user)
-        messages.success(request, 'Account created successfully!')
-        return redirect('product_list')
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'Email already exists.')
+            return render(request, 'accounts/signup.html')
+        
+        try:
+            user = User.objects.create_user(username=username, email=email, password=password)
+            login(request, user)
+            messages.success(request, 'Account created successfully!')
+            return redirect('product_list')
+        except Exception as e:
+            messages.error(request, f'Error creating account: {str(e)}')
+            return render(request, 'accounts/signup.html')
     
     return render(request, 'accounts/signup.html')
 
@@ -36,13 +48,20 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        
+        if not username or not password:
+            messages.error(request, 'Username and password are required.')
+            return render(request, 'accounts/login.html')
+        
         user = authenticate(request, username=username, password=password)
         
         if user is not None:
             login(request, user)
             messages.success(request, 'Logged in successfully!')
-            next_url = request.GET.get('next', 'product_list')
-            return redirect(next_url)
+            next_url = request.GET.get('next')
+            if next_url:
+                return redirect(next_url)
+            return redirect('product_list')
         else:
             messages.error(request, 'Invalid username or password.')
     

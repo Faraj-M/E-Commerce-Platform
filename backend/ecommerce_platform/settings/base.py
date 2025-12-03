@@ -3,7 +3,10 @@ import os
 from dotenv import load_dotenv
 from django.core.management.utils import get_random_secret_key
 
-load_dotenv()
+# Load .env file from project root (only if not in Docker where env vars are already set)
+# In Docker, environment variables are set by docker-compose, so load_dotenv is optional
+if not os.environ.get('DB_HOST'):  # If DB_HOST is not set, we're likely not in Docker
+    load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -60,6 +63,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'apps.catalog.context_processors.categories',
             ],
         },
     },
@@ -129,6 +133,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20
 }
 
-STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', '')
-STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
-STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
+# Get Stripe keys and remove any whitespace/newlines
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', '').strip().replace('\n', '').replace('\r', '')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '').strip().replace('\n', '').replace('\r', '')
+STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '').strip().replace('\n', '').replace('\r', '')

@@ -11,22 +11,21 @@
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/Faraj-M/E-Commerce-Platform.git
-   cd E-Commerce-Platform
    ```
 
-2. **Configure Stripe keys (optional)**:
-   - A `.env` file with safe defaults is already included. The app will run without changes, but payment flows need real Stripe test keys.
-   - To use payments, edit `.env` and replace the placeholder values for `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` with keys from https://dashboard.stripe.com/test/apikeys.
-   - `DJANGO_SECRET_KEY` can stay blank—Docker auto-generates it on boot.
+2. **Configure Stripe keys (optional for testing)**:
+   - Default placeholder test keys are included in `infrastructure/docker-compose.yml` for immediate testing. The app will run, but payment flows need real Stripe test keys to work.
+   - For actual payment testing, see `docs/STRIPE.md`.
 
 3. **Build and run with Docker** (Docker Desktop must be running):
    ```bash
-   docker-compose up --build
+   cd E-Commerce-Platform
+   docker-compose -f infrastructure/docker-compose.yml up --build
    ```
 
 4. **Create admin user** (run after the containers start):
    ```bash
-   docker-compose exec web python manage.py createsuperuser
+   docker-compose -f infrastructure/docker-compose.yml exec web python manage.py createsuperuser
    ```
 
 5. **Access the application**:
@@ -37,7 +36,7 @@
 
 Sample products are automatically loaded when the container starts. You can also load them manually:
 ```bash
-docker-compose exec web python manage.py loaddata sample_data
+docker-compose -f infrastructure/docker-compose.yml exec web python manage.py loaddata sample_data
 ```
 
 <!--
@@ -58,17 +57,96 @@ docker-compose exec web python manage.py loaddata sample_data
 
 
 
-## Project Notes
+## Tech Stack
 
-- **API design & external integration** – Django REST Framework viewsets in `apps.catalog`, `apps.orders`, `apps.accounts`, and `apps.payments` expose CRUD endpoints documented in `docs/API.md`; the payments module creates Stripe PaymentIntents and listens for webhooks in `apps/payments/views.py`.
-- **Architecture & separation** – Monolithic Django MTV split into modular apps plus shared `core` utilities, server-rendered templates in `frontend/templates`, and DRF routers mounted under `/api`; PlantUML diagrams in `docs/architecture/*.puml` describe the running stack (PostgreSQL, Redis, Stripe).
-- **Authentication & security** – Custom `accounts.User` model with Django session auth + allauth backend, login/signup/profile flows in `apps/accounts/views.py`, `login_required` around checkout and payments, staff-only filtering inside API viewsets, CSRF defaults, and Stripe webhook signature checks.
-- **Database & ORM** – PostgreSQL schema managed through Django migrations (`apps/*/migrations/0001_initial.py`) with relationships tying `User`, `Product`, `Order`, `OrderItem`, and `Payment`; catalog fixtures (`apps/catalog/fixtures/sample_data.json`) seed demo data during Docker boot.
-- **Deployment & DevOps** – Dockerfile builds the Gunicorn web image, while `docker-compose.yml` orchestrates web, Postgres, and Redis, runs migrations + sample data, injects secrets from `.env`, and wires Stripe keys; `generate-secret-key.sh` assists local runs.
-- **Version control & collaboration** – Shared Git repo with Docker-first onboarding documented here, architecture notes in `docs/`, and modular app folders that keep pair-programming responsibilities easy to split.
-- **Code quality & documentation** – Central helpers live in `backend/common`, serializers/models carry docstrings, API reference is tracked in `docs/API.md`, and PlantUML diagrams plus architecture notes make the design review-ready; HTMX/Tailwind placeholders under `frontend/static` mark where presentation polish lands.
+### Frontend
+- **HTML/CSS/JavaScript**: Server-rendered Django templates with Tailwind CSS for styling
+- **HTMX**: Progressive enhancement for dynamic interactions (cart updates, form submissions)
+- **Tailwind CSS**: Utility-first CSS framework loaded via CDN
+- **Font Awesome**: Icon library for UI elements
 
-### Still to implement
-- **Testing & QA** – `backend/tests/` only has a placeholder; unit, API, and Selenium coverage still need to be written.
-- **Performance optimization** – No PageSpeed runs, caching strategy, or Tailwind build yet (`frontend/static/css/main.css` is still a stub).
-- **CI/CD & ops polish** – No automated pipeline, HTTPS termination, Celery worker container, or Stripe webhook tunnel automation; deployment docs still assume manual `docker-compose up`.
+### Backend
+- **Python 3.12+**: Programming language
+- **Django 5.0+**: Web framework (MVC/MTV pattern)
+- **Django REST Framework**: RESTful API layer
+- **Django Allauth**: Authentication backend
+- **Gunicorn**: WSGI HTTP server for production
+
+### Database
+- **PostgreSQL 15**: Primary relational database
+- **Django ORM**: Object-relational mapping for database interactions
+
+### Infrastructure & Services
+- **Docker & Docker Compose**: Containerization and orchestration
+- **Redis**: Caching and session storage (future: Celery task queue)
+- **Stripe API**: Payment processing integration
+
+### Development Tools
+- **Git**: Version control
+- **Poetry**: Dependency management (optional, requirements.txt used for Docker)
+
+## Project Structure
+
+```
+E-Commerce-Platform/
+├── backend/                    # Django backend application
+│   ├── apps/                   # Django apps (modular components)
+│   │   ├── accounts/           # User authentication & profiles
+│   │   │   ├── models.py       # User model (extends AbstractUser)
+│   │   │   ├── views.py        # Login, signup, profile views
+│   │   │   ├── urls.py         # Account routes
+│   │   │   └── serializers.py  # DRF serializers for API
+│   │   ├── catalog/            # Product catalog
+│   │   │   ├── models.py       # Product, Category models
+│   │   │   ├── views.py        # Product list/detail views
+│   │   │   ├── fixtures/       # Sample product data
+│   │   │   └── templatetags/   # Custom template filters
+│   │   ├── orders/             # Shopping cart & orders
+│   │   │   ├── models.py       # Order, OrderItem models
+│   │   │   ├── views.py        # Cart, checkout, order views
+│   │   │   └── urls.py         # Order routes
+│   │   ├── payments/           # Payment processing
+│   │   │   ├── models.py       # Payment model
+│   │   │   ├── views.py        # Stripe integration, webhooks
+│   │   │   └── urls.py         # Payment routes
+│   │   └── core/               # Shared utilities (placeholder)
+│   ├── common/                 # Common utilities
+│   │   ├── utils.py           # Helper functions
+│   │   └── exceptions.py      # Custom exceptions
+│   ├── ecommerce_platform/    # Django project settings
+│   │   ├── settings/          # Environment-specific settings
+│   │   │   ├── base.py        # Base settings
+│   │   │   ├── local.py       # Development settings
+│   │   │   └── production.py # Production settings
+│   │   ├── urls.py            # Root URL configuration
+│   │   ├── wsgi.py            # WSGI application
+│   │   └── asgi.py            # ASGI application
+│   ├── tests/                 # Test suite (placeholder)
+│   └── manage.py              # Django management script
+├── frontend/                   # Frontend assets
+│   ├── templates/             # Django HTML templates
+│   │   ├── base.html          # Base template
+│   │   ├── accounts/          # Auth templates
+│   │   ├── catalog/           # Product templates
+│   │   ├── orders/            # Cart & order templates
+│   │   └── payments/          # Payment templates
+│   └── static/                # Static files
+│       ├── css/               # Stylesheets
+│       ├── js/                # JavaScript files
+│       └── img/               # Images
+├── infrastructure/            # Deployment configuration
+│   ├── Dockerfile             # Docker image definition
+│   ├── docker-compose.yml     # Multi-container orchestration
+│   └── README.md              # Infrastructure docs
+├── docs/                      # Documentation
+│   ├── API.md                 # API endpoint documentation
+│   ├── STRIPE.md              # Stripe setup and testing guide
+│   └── architecture/          # Architecture diagrams
+│       ├── high-level-overview.puml
+│       ├── package-diagram.puml
+│       └── class-diagram.puml
+├── requirements.txt           # Python dependencies
+├── .env.example              # Environment variables template
+├── .gitignore                # Git ignore rules
+└── README.md                 # This file
+```

@@ -1,52 +1,96 @@
 {% extends 'base.html' %}
+{% load product_filters %}
 
 {% block title %}{{ product.name }} - E-Commerce Platform{% endblock %}
 
 {% block content %}
 <div class="px-4 sm:px-6 lg:px-8">
-    <a href="{% url 'product_list' %}" class="text-indigo-600 hover:text-indigo-800 mb-4 inline-block">← Back to Products</a>
+    <a href="{% url 'product_list' %}" class="text-blue-400 hover:text-blue-300 mb-4 inline-block font-medium transition">
+        <i class="fas fa-arrow-left mr-2"></i>Back to Products
+    </a>
     
-    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="bg-slate-800 rounded-xl shadow-xl overflow-hidden border border-slate-700">
         <div class="md:flex">
             <div class="md:w-1/2">
-                {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-96 object-cover">
-                {% else %}
-                <div class="w-full h-96 bg-gray-200 flex items-center justify-center">
-                    <span class="text-gray-400 text-xl">No Image</span>
-                </div>
-                {% endif %}
+                <img src="{{ product|product_image_url }}" alt="{{ product.name }}" class="w-full h-96 object-cover">
             </div>
             <div class="md:w-1/2 p-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ product.name }}</h1>
-                <p class="text-gray-600 mb-4">{{ product.description }}</p>
+                <h1 class="text-4xl font-bold text-white mb-4">{{ product.name }}</h1>
+                <p class="text-slate-300 mb-6 text-lg leading-relaxed">{{ product.description }}</p>
                 <div class="mb-4">
-                    <span class="text-3xl font-bold text-indigo-600">${{ product.price }}</span>
+                    <span class="text-4xl font-bold text-blue-400">${{ product.price }}</span>
                 </div>
                 <div class="mb-4">
-                    <span class="text-sm text-gray-500">Category: </span>
-                    <span class="text-sm font-medium">{{ product.category.name }}</span>
+                    <span class="text-sm text-slate-400">Category: </span>
+                    <span class="text-sm font-semibold text-blue-400">{{ product.category.name }}</span>
                 </div>
                 <div class="mb-6">
                     {% if product.is_in_stock %}
-                    <span class="text-green-600 font-medium">✓ In Stock ({{ product.stock_quantity }} available)</span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-500 text-white">
+                        <i class="fas fa-check-circle mr-2"></i>In Stock ({{ product.stock_quantity }} available)
+                    </span>
                     {% else %}
-                    <span class="text-red-600 font-medium">✗ Out of Stock</span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-500 text-white">
+                        <i class="fas fa-times-circle mr-2"></i>Out of Stock
+                    </span>
                     {% endif %}
                 </div>
                 
                 {% if product.is_in_stock %}
-                <form method="post" action="{% url 'add_to_cart' product.id %}">
+                <form method="post" action="{% url 'add_to_cart' product.id %}" id="add-to-cart-form" class="mb-4">
                     {% csrf_token %}
                     <div class="flex items-center gap-4 mb-4">
-                        <label for="quantity" class="text-sm font-medium">Quantity:</label>
+                        <label for="quantity" class="text-sm font-semibold text-white">Quantity:</label>
                         <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ product.stock_quantity }}" 
-                               class="w-20 px-3 py-2 border rounded">
+                               class="w-24 px-3 py-2 border border-slate-600 bg-slate-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     </div>
-                    <button type="submit" class="w-full bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 font-medium">
-                        Add to Cart
+                    <button type="submit" id="add-to-cart-btn" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 font-semibold transition-all duration-200 transform hover:scale-105">
+                        <i class="fas fa-shopping-cart mr-2"></i><span id="btn-text">Add to Cart</span>
                     </button>
                 </form>
+                <script>
+                    document.getElementById('add-to-cart-form').addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        const form = this;
+                        const btn = document.getElementById('add-to-cart-btn');
+                        const btnText = document.getElementById('btn-text');
+                        const originalHTML = btnText.innerHTML;
+                        
+                        btn.disabled = true;
+                        btnText.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Adding...';
+                                btn.classList.remove('from-blue-600', 'to-blue-700', 'hover:from-blue-700', 'hover:to-blue-800');
+                                btn.classList.add('from-blue-500', 'to-blue-600');
+                        
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: new FormData(form),
+                            headers: {
+                                'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                btnText.innerHTML = '<i class="fas fa-check mr-2"></i>Added to Cart!';
+                                btn.classList.remove('from-blue-500', 'to-blue-600');
+                                btn.classList.add('from-green-600', 'to-green-700');
+                                setTimeout(() => {
+                                    btnText.innerHTML = originalHTML;
+                                    btn.classList.remove('from-green-600', 'to-green-700');
+                                    btn.classList.add('from-blue-600', 'to-blue-700', 'hover:from-blue-700', 'hover:to-blue-800');
+                                    btn.disabled = false;
+                                }, 2000);
+                            }
+                        })
+                        .catch(() => {
+                            btnText.innerHTML = originalHTML;
+                            btn.classList.remove('from-blue-500', 'to-blue-600');
+                            btn.classList.add('from-blue-600', 'to-blue-700', 'hover:from-blue-700', 'hover:to-blue-800');
+                            btn.disabled = false;
+                        });
+                    });
+                </script>
                 {% endif %}
             </div>
         </div>
