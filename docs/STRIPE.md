@@ -27,10 +27,6 @@
 
 4. **Restart Docker containers**:
    ```bash
-   docker-compose -f infrastructure/docker-compose.yml restart web
-   ```
-   Or for a full restart:
-   ```bash
    docker-compose -f infrastructure/docker-compose.yml down
    docker-compose -f infrastructure/docker-compose.yml up --build
    ```

@@ -1,5 +1,7 @@
 # E-Commerce Platform
 
+Demo Video: https://drive.google.com/file/d/1o7S_5AMXYrXbf27jc7EooYbtonpsLWxz/view?usp=sharing
+
 ## Quick Start with Docker
 
 ### Prerequisites
@@ -39,24 +41,6 @@ Sample products are automatically loaded when the container starts. You can also
 docker-compose -f infrastructure/docker-compose.yml exec web python manage.py loaddata sample_data
 ```
 
-<!--
-
-### Managing Database Changes
-- If you modify models, regenerate migrations inside Docker:
-  ```bash
-  docker-compose run --rm web python manage.py makemigrations
-  docker-compose run --rm web python manage.py migrate
-  ```
-- To reapply fixtures or reset data, run `docker-compose exec web python manage.py loaddata sample_data`.
-
-### Troubleshooting
-- Make sure Docker Desktop is running before `docker-compose up`.
-- Check logs if something fails: `docker-compose logs -f web`.
-- If you change environment values, restart the stack: `docker-compose down && docker-compose up --build`.
--->
-
-
-
 ## Tech Stack
 
 ### Frontend
@@ -84,6 +68,9 @@ docker-compose -f infrastructure/docker-compose.yml exec web python manage.py lo
 ### Development Tools
 - **Git**: Version control
 - **Poetry**: Dependency management (optional, requirements.txt used for Docker)
+
+### System Design diagrams 
+- can be found under `docs/architecture`
 
 ## Project Structure
 
@@ -142,9 +129,9 @@ E-Commerce-Platform/
 │   ├── API.md                 # API endpoint documentation
 │   ├── STRIPE.md              # Stripe setup and testing guide
 │   └── architecture/          # Architecture diagrams
-│       ├── high-level-overview.puml
-│       ├── package-diagram.puml
-│       └── class-diagram.puml
+│       ├── high-level-overview.png
+│       ├── package-diagram.png
+│       └── class-diagram.png
 ├── requirements.txt           # Python dependencies
 ├── .env.example              # Environment variables template
 ├── .gitignore                # Git ignore rules
